@@ -1,0 +1,54 @@
+vol offline -vserver dev -volume in_process -f true
+y
+vol offline -vserver dev -volume RIP -f true
+y
+vol offline -vserver dev -volume incoming -f true
+y
+vol offline -vserver dev -volume pageflex -f true
+y
+vol offline -vserver dev -volume web -f true
+y
+
+vol offline -vserver stage -volume in_process -f true
+y
+vol offline -vserver stage -volume RIP -f true
+y
+vol offline -vserver stage -volume incoming -f true
+y
+vol offline -vserver stage -volume file_archive -f true
+y
+
+vol destroy -vserver dev -volume in_process -f true
+vol destroy -vserver dev -volume RIP -f true
+vol destroy -vserver dev -volume incoming -f true
+vol destroy -vserver dev -volume pageflex -f true
+vol destroy -vserver dev -volume web -f true
+
+vol destroy -vserver stage -volume in_process -f true
+vol destroy -vserver stage -volume RIP -f true
+vol destroy -vserver stage -volume incoming -f true
+vol destroy -vserver stage -volume file_archive -f true
+
+volume clone create -flexclone incoming -vserver dev -parent-volume incoming -parent-vserver 3 -junction-path /incoming
+volume clone create -flexclone in_process -vserver dev -parent-volume in_process -parent-vserver 3 -junction-path /in_process
+volume clone create -flexclone RIP -vserver dev -parent-volume RIP -parent-vserver 3 -junction-path /RIP
+volume clone create -flexclone file_archive -vserver dev -parent-volume file_archive -parent-vserver 3 -junction-path /file_archive
+volume clone create -flexclone web -vserver dev -parent-volume web -parent-vserver 3 -parent-snapshot clone_expc_stg_webfc.3 -junction-path /web
+volume clone create -flexclone pageflex -vserver dev -parent-volume pageflex -parent-vserver 3 -parent-snapshot clone_expc_stg_pagefle.0 -junction-path /pageflex
+
+volume clone create -flexclone incoming -vserver stage -parent-volume incoming -parent-vserver 3 -junction-path /incoming
+volume clone create -flexclone in_process -vserver stage -parent-volume in_process -parent-vserver 3 -junction-path /in_process
+volume clone create -flexclone RIP -vserver stage -parent-volume RIP -parent-vserver 3 -junction-path /RIP
+volume clone create -flexclone file_archive -vserver stage -parent-volume file_archive -parent-vserver 3 -junction-path /file_archive
+
+volume modify -vserver dev -volume incoming -policy DevServers
+volume modify -vserver dev -volume in_process -policy DevServers
+volume modify -vserver dev -volume RIP -policy DevServers
+volume modify -vserver dev -volume web -policy DevServers
+volume modify -vserver dev -volume pageflex -policy DevServers
+volume modify -vserver dev -volume file_archive -policy DevServers
+
+volume modify -vserver stage -volume incoming -policy stage_servers
+volume modify -vserver stage -volume in_process -policy stage_servers
+volume modify -vserver stage -volume RIP -policy stage_servers
+volume modify -vserver stage -volume file_archive -policy stage_servers
